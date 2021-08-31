@@ -80,7 +80,7 @@ namespace Sandbox
 			{
 				if ( !IsInside )
 				{
-					Log.Error( "Starting new Soundscape: " + SoundScapeFileName );
+					if ( DebugSoundscapes ) Log.Error( "Starting new Soundscape: " + SoundScapeFileName );
 
 					SoundScape.StartSoundScape( this );
 				}
