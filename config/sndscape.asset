@@ -1,6 +1,7 @@
 @struct = SoundScapeSoundEntry :
 [
     SoundFile(sound) : "Sound"
+    SoundTag(string) : "Sound Tag"
     Volume(vector) { editor = "Ranged( -100, 100 )"} : "Volume" : "1 1 0"
     Pitch(vector) { editor = "Ranged( -100, 100 )"} : "Pitch" : "1 1 0"
     RepeatTime(vector) {editor = "Ranged( -1, 10000 )"} : "Repeat Time" : "-1 -1 0"

@@ -5,7 +5,7 @@ using Hammer;
 
 namespace Sandbox
 {
-	[Library( "snd_better_soundscape" )]
+	[Library( "snd_soundscape_jess" )]
 	[EditorSprite( "editor/env_soundscape.vmat" )]
 	[DrawSphere( "Radius" )]
 	public partial class SoundScapeEntity : Entity
@@ -21,6 +21,8 @@ namespace Sandbox
 
 		[Property, Net]
 		public int Radius { get; set; } = 128;
+		[Property, Net]
+		public bool NeedsLineOfSight { get; set; }
 
 		[Property( "soundscape" ), Net]
 		public string SoundScapeFileName { get; set; }
@@ -67,6 +69,45 @@ namespace Sandbox
 		}
 
 
+		/// <summary>
+		/// Input: Tag,Volume,Time  split by comma \n
+		/// So like this: Exterior,0.5,5 
+		/// </summary>
+		/// <param name="activator"></param>
+		/// <param name="TagVolumeArrayTime"></param>
+		[Input]
+		public void FadeTagTo( Entity activator = null, string TagVolumeArrayTime = null )
+		{
+			if ( activator is Player p )
+				ClientStuff( To.Single( p ), TagVolumeArrayTime );
+
+		}
+		[ClientRpc]
+		public void ClientStuff( string TagVolumeArrayTime = null )
+		{
+			string[] strarr = TagVolumeArrayTime.Split( ',' );
+			if ( strarr.Length >= 2 )
+			{
+				if ( SoundScape.PlayingSoundScape.ActiveSoundsByTag.ContainsKey( strarr[0] ) )
+				{
+					foreach ( var item in SoundScape.PlayingSoundScape?.ActiveSoundsByTag[strarr[0]] )
+					{
+						if ( strarr.Length == 3 )
+						{
+							item.FadeVolumeTo( StringX.ToFloat( strarr?[1], 1 ), StringX.ToFloat( strarr?[2], 1 ) );
+						}
+						else
+						{
+							item.FadeVolumeTo( StringX.ToFloat( strarr?[1], 1 ) );
+						}
+
+					}
+				}
+
+			}
+		}
+
+
 
 
 		public bool IsInside = false;
@@ -80,9 +121,13 @@ namespace Sandbox
 			{
 				if ( !IsInside )
 				{
+					if ( NeedsLineOfSight && !Trace.Ray( Position, Local.Pawn.Position ).Ignore( Local.Pawn ).Run().Hit || !NeedsLineOfSight )
+					{
+						SoundScape.StartSoundScape( this );
+					}
 					if ( DebugSoundscapes ) Log.Error( "Starting new Soundscape: " + SoundScapeFileName );
 
-					SoundScape.StartSoundScape( this );
+
 				}
 				IsInside = true;
 			}

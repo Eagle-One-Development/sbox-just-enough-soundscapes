@@ -12,16 +12,20 @@ namespace Sandbox
 		public class SoundScapeSoundEntry
 		{
 			public string SoundFile { get; set; }
+			public string SoundTag { get; set; }
 			public bool RandomPosition { get; set; }
 			public int SoundPositionIndex { get; set; }
 			public string SoundPositionEntityName { get; set; }
 			public Vector3 SoundPosition { get; set; }
 			public Vector2 RandomPositionRadiusMinMax { get; set; }
 			public RangedFloat Volume { get; set; } = new( 1 );
+			public float CurrentVolume = 1f;
 			public RangedFloat Pitch { get; set; } = new( 1 );
 			public RangedFloat RepeatTime { get; set; } = new( -1f );
 
-			private Sound SoundInstance;
+
+
+			public Sound SoundInstance;
 			private bool localspace = true;
 			private Vector3 GeneratedPosition = new();
 			private Vector3 LastPosition = new();
@@ -81,7 +85,8 @@ namespace Sandbox
 
 				}
 				SoundInstance.SetPitch( Pitch.GetValue() );
-				SoundInstance.SetVolume( Volume.GetValue() );//Rand.Float( Volume.x, Volume.y == 0 ? Volume.x : Volume.y ) );
+				CurrentVolume = Volume.GetValue();
+				SoundInstance.SetVolume( CurrentVolume );//Rand.Float( Volume.x, Volume.y == 0 ? Volume.x : Volume.y ) );
 				Sounds.Add( SoundInstance );
 
 				ToRepeatTime = RepeatTime.GetValue();
@@ -99,10 +104,26 @@ namespace Sandbox
 				//Log.Error( Generated + " IDK " + ToRepeatTime );
 				if ( RepeatTime.x != -1f && Generated > ToRepeatTime ) StartSound();
 			}
+
+			public async void FadeVolumeTo( float volume, float seconds = 1, int steps = 100 )
+			{
+				if ( volume == CurrentVolume ) return;
+
+				var initialVolume = CurrentVolume;
+				var volumeMod = initialVolume - volume;
+				for ( int i = 0; i < steps; i++ )
+				{
+					SoundInstance.SetVolume( initialVolume - (i * volumeMod / steps) );
+					CurrentVolume = initialVolume - (i * volumeMod / steps);
+					await GameTask.DelaySeconds( seconds / steps );
+				}
+			}
 		}
 		public string[] SoundScapes { get; set; }
 		public List<SoundScape> SecondarySoundscapes = new();
 		public SoundScapeSoundEntry[] SoundEntries { get; set; }
+
+		public Dictionary<string, List<SoundScapeSoundEntry>> ActiveSoundsByTag = new();
 
 
 
@@ -110,14 +131,14 @@ namespace Sandbox
 		public static Dictionary<string, SoundScape> ByName = new();
 		public static Dictionary<string, SoundScape> ByPath = new();
 
-		private static SoundScape PlayingSoundScape;
+		public static SoundScape PlayingSoundScape;
 
 		private static List<Sound> Sounds = new();
 
 		private bool IsActive = false;
 
 
-		private static SoundScapeEntity SoundScapeEntity;
+		public static SoundScapeEntity SoundScapeEntity;
 		protected override void PostLoad()
 		{
 			ByName[Name] = this;
@@ -153,6 +174,14 @@ namespace Sandbox
 			foreach ( var item in SoundEntries )
 			{
 				item.StartSound();
+
+				if ( string.IsNullOrEmpty( item.SoundTag ) ) continue;
+				if ( !ActiveSoundsByTag.ContainsKey( item.SoundTag ) ) ActiveSoundsByTag.Add( item.SoundTag, new() );
+
+				if ( ActiveSoundsByTag.TryGetValue( item.SoundTag, out List<SoundScapeSoundEntry> entryList ) )
+				{
+					entryList.Add( item );
+				}
 			}
 			Event.Register( this );
 			return this;
@@ -166,13 +195,16 @@ namespace Sandbox
 			{
 				if ( ByPath.TryGetValue( item, out SoundScape scape ) )
 				{
-					Log.Info( scape.Name );
+					//Log.Info( scape.Name );
 					sounds.SecondarySoundscapes.Add( scape );
 				}
 			}
+			Log.Info( PlayingSoundScape?.ActiveSoundsByTag.Count );
 			PlayingSoundScape?.Stop();
+			Log.Info( PlayingSoundScape?.ActiveSoundsByTag.Count );
 			SoundScapeEntity = soundScapeEntity;
 			PlayingSoundScape = sounds.Start();
+			Log.Info( PlayingSoundScape?.ActiveSoundsByTag.Count );
 		}
 		public void Stop()
 		{
@@ -188,6 +220,7 @@ namespace Sandbox
 			}
 
 			Event.Unregister( this );
+			ActiveSoundsByTag = new();
 		}
 
 
@@ -204,5 +237,6 @@ namespace Sandbox
 				item.UpdateSound();
 			}
 		}
+
 	}
 }
