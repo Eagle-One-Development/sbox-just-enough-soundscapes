@@ -2,7 +2,10 @@
 {
 	data = 
 	{
-		SoundScapes = [  ]
+		SoundScapes = 
+		[
+			"soundscapes/loopingscape.sndscape",
+		]
 		SoundEntries = 
 		[
 			{

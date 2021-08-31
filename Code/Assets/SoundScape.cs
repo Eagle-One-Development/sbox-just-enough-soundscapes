@@ -154,6 +154,7 @@ namespace Sandbox
 			{
 				item.StartSound();
 			}
+			Event.Register( this );
 			return this;
 		}
 		public static void StartSoundScape( SoundScapeEntity soundScapeEntity )
@@ -185,15 +186,19 @@ namespace Sandbox
 			{
 				item.StopSound();
 			}
+
+			Event.Unregister( this );
 		}
 
 
 		public void Update()
 		{
-			foreach ( var item in SecondarySoundscapes )
-			{
-				item.Update();
-			}
+			Event.Run( "JESS_UpdateSoundscapes" );
+
+		}
+		[Event( "JESS_UpdateSoundscapes" )]
+		public void UpdateSounds()
+		{
 			foreach ( var item in SoundEntries )
 			{
 				item.UpdateSound();
