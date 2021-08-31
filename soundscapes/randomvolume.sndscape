@@ -1,0 +1,20 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+	data = 
+	{
+		SoundScapes = [  ]
+		SoundEntries = 
+		[
+			{
+				SoundFile = "audiospur-8"
+				SoundPosition = [ 0.0, 0.0, 0.0 ]
+				RepeatTime = [ -1.0, -1.0, 0.0 ]
+				RandomPosition = false
+				RandomPositionRadiusMinMax = [ 0.0, 0.0, 0.0 ]
+				SoundPositionIndex = -1
+				Volume = [ 0.0, 1.0, 1.0 ]
+				Pitch = [ 1.0, 0.0, 0.0 ]
+			},
+		]
+	}
+}

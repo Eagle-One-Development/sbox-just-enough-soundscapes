@@ -1,0 +1,18 @@
+@struct = SoundScapeSoundEntry :
+[
+    SoundFile(sound) : "Sound"
+    Volume(vector) { editor = "Ranged( -100, 100 )"} : "Volume" : "1 1 0"
+    Pitch(vector) { editor = "Ranged( -100, 100 )"} : "Pitch" : "1 1 0"
+    RepeatTime(vector) {editor = "Ranged( -1, 10000 )"} : "Repeat Time" : "-1 -1 0"
+    SoundPositionIndex(integer) { group = "Position"} : "Position Index" : "-1"
+    SoundPositionEntityName(string) { group = "Position"} : "Entity To play from (overwrites other position settings)"
+    SoundPosition(vector) { group = "Position"} : "Position Relative to Player"
+    RandomPosition(bool) { group = "Position"} : "Random Position"
+    RandomPositionRadiusMinMax(vector) { group = "Position" editor = "Ranged( -10000, 10000 )"} : "Random Position Distances in a sphere"
+]
+
+@BaseClass = sndscape
+[
+    SoundScapes(array:string){ editor = "AssetBrowse( sndscape )" } :"SoundScapes To Play"
+    SoundEntries(array:struct:SoundScapeSoundEntry) : "Sounds To Play"
+]
