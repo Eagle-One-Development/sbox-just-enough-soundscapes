@@ -147,6 +147,7 @@ namespace Sandbox
 
 			foreach ( var item in SecondarySoundscapes )
 			{
+				if ( item.IsActive ) continue;
 				item.Start();
 			}
 			foreach ( var item in SoundEntries )
@@ -177,6 +178,7 @@ namespace Sandbox
 			IsActive = false;
 			foreach ( var item in SecondarySoundscapes )
 			{
+				if ( !item.IsActive ) continue;
 				item.Stop();
 			}
 			foreach ( var item in SoundEntries )
