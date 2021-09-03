@@ -7,7 +7,7 @@ namespace Sandbox
 {
 	[Library( "snd_soundscape_jess" )]
 	[EditorSprite( "editor/env_soundscape.vmat" )]
-	[DrawSphere( "Radius" )]
+	[Sphere( "Radius", 16777215, false )]
 	public partial class SoundScapeEntity : Entity
 	{
 		[ClientVar( "jess_debug_soundscape" )]
@@ -15,7 +15,6 @@ namespace Sandbox
 
 		public SoundScapeEntity()
 		{
-			Transmit = TransmitType.Always;
 			Event.Register( this );
 		}
 
@@ -50,6 +49,8 @@ namespace Sandbox
 		public override void Spawn()
 		{
 			base.Spawn();
+			Transmit = TransmitType.Always;
+
 			GetPositions();
 		}
 
@@ -108,33 +109,23 @@ namespace Sandbox
 		}
 
 
-
-
-		public bool IsInside = false;
-
-
 		[Event.Tick.Client]
 		public void ClientTick()
 		{
 			SoundScape.Origin = (Local.Pawn.Camera as Camera).Pos;
-			if ( Position.Distance( Local.Pawn.Position ) < Radius )
+			var Eyepos = Local.Pawn.EyePos;
+			if ( Position.Distance( Eyepos ) < Radius && SoundScape.SoundScapeEntity != this && (NeedsLineOfSight && !Trace.Ray( Position, Eyepos ).Ignore( Local.Pawn ).Run().Hit || !NeedsLineOfSight) )
 			{
-				if ( !IsInside )
+				if ( SoundScape.SoundScapeEntity?.Position.Distance( Eyepos ) < Position.Distance( Eyepos ) )
 				{
-					if ( NeedsLineOfSight && !Trace.Ray( Position, Local.Pawn.Position ).Ignore( Local.Pawn ).Run().Hit || !NeedsLineOfSight )
-					{
-						SoundScape.StartSoundScape( this );
-					}
-					if ( DebugSoundscapes ) Log.Error( "Starting new Soundscape: " + SoundScapeFileName );
-
-
+					if ( DebugSoundscapes ) DebugOverlay.Sphere( Position, Radius, Color.Gray );
+					return;
 				}
-				IsInside = true;
+				SoundScape.StartSoundScape( this );
 			}
 			else
 			{
 				if ( DebugSoundscapes ) DebugOverlay.Sphere( Position, Radius, Color.Red );
-				IsInside = false;
 			}
 		}
 

@@ -1,7 +1,7 @@
 // 
 // Sandbox.SoundScapeEntity : Sandbox.Entity 
 // 
-@PointClass iconsprite( "editor/env_soundscape.vmat" ) sphere(radius) = snd_soundscape_jess : ""
+@PointClass iconsprite( "editor/env_soundscape.vmat" ) sphere( Radius ) = snd_soundscape_jess : ""
 [
 	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
@@ -29,7 +29,7 @@ metadata
 {
 	auto_apply_material = "materials/tools/toolstrigger.vmat"
 }
-= snd_soundscape_tag_fader_point_jess : ""
+= snd_soundscape_fader_point_jess : ""
 [
 	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
@@ -66,7 +66,7 @@ metadata
 {
 	auto_apply_material = "materials/tools/toolstrigger.vmat"
 }
-= snd_soundscape_tag_fader_aabb_jess : ""
+= snd_soundscape_fader_aabb_jess : ""
 [
 	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
@@ -103,7 +103,7 @@ metadata
 {
 	auto_apply_material = "materials/tools/toolstrigger.vmat"
 }
-= snd_soundscape_tag_fader_direction_aabb_jess : ""
+= snd_soundscape_fader_direction_aabb_jess : ""
 [
 	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."

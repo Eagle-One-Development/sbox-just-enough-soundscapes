@@ -186,25 +186,23 @@ namespace Sandbox
 			Event.Register( this );
 			return this;
 		}
-		public static void StartSoundScape( SoundScapeEntity soundScapeEntity )
+		public static bool StartSoundScape( SoundScapeEntity soundScapeEntity )
 		{
-			if ( SoundScapeEntity == soundScapeEntity || (SoundScapeEntity is not null && SoundScapeEntity.IsInside) || string.IsNullOrEmpty( soundScapeEntity.SoundScapeFileName ) || !ByName.ContainsKey( soundScapeEntity.SoundScapeFileName ) ) return;
+			if ( string.IsNullOrEmpty( soundScapeEntity.SoundScapeFileName ) || !ByName.ContainsKey( soundScapeEntity.SoundScapeFileName ) ) return false;
 			SoundScape sounds = ByName[soundScapeEntity.SoundScapeFileName];
 
 			foreach ( var item in sounds.SoundScapes )
 			{
 				if ( ByPath.TryGetValue( item, out SoundScape scape ) )
 				{
-					//Log.Info( scape.Name );
 					sounds.SecondarySoundscapes.Add( scape );
 				}
 			}
-			Log.Info( PlayingSoundScape?.ActiveSoundsByTag.Count );
 			PlayingSoundScape?.Stop();
-			Log.Info( PlayingSoundScape?.ActiveSoundsByTag.Count );
 			SoundScapeEntity = soundScapeEntity;
 			PlayingSoundScape = sounds.Start();
-			Log.Info( PlayingSoundScape?.ActiveSoundsByTag.Count );
+			if ( SoundScapeEntity.DebugSoundscapes ) Log.Error( "Starting new Soundscape: " + soundScapeEntity.SoundScapeFileName );
+			return true;
 		}
 		public void Stop()
 		{
