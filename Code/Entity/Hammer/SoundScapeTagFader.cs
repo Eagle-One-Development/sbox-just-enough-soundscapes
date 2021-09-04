@@ -123,7 +123,7 @@ namespace Sandbox
 		[Event.Tick.Client]
 		public void ClientTick()
 		{
-			if ( !IsEnabled ) return;
+			if ( !IsEnabled || Local.Pawn == null ) return;
 			if ( DebugFader )
 			{
 				DebugOverlay.Sphere( Position, InnerRadius, Color.FromBytes( 77, 147, 191 ) );
@@ -193,7 +193,7 @@ namespace Sandbox
 		[Event.Tick.Client]
 		public void ClientTick()
 		{
-			if ( !IsEnabled ) return;
+			if ( !IsEnabled || Local.Pawn == null ) return;
 
 			if ( DebugFader )
 			{
@@ -233,11 +233,11 @@ namespace Sandbox
 
 				if ( soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity )
 				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, 0f );
+					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 10 );
 				}
 				else if ( !soundScapeEntity.IsValid() )
 				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, 0f );
+					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 10 );
 				}
 
 
@@ -255,11 +255,11 @@ namespace Sandbox
 
 				if ( soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity )
 				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, 0f );
+					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 1 );
 				}
 				else if ( !soundScapeEntity.IsValid() )
 				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, 0f );
+					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 1 );
 				}
 			}
 		}

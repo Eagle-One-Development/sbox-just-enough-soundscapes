@@ -127,14 +127,14 @@ namespace Sandbox
 		}
 
 
-		public static void FadeTagTo( string Tag, float Volume, float seconds = 0.1f )
+		public static void FadeTagTo( string Tag, float Volume, float seconds = 0.1f, int steps = 100 )
 		{
 
-			if ( SoundScape.PlayingSoundScape.ActiveSoundsByTag.ContainsKey( Tag ) )
+			if ( PlayingSoundScape != null && PlayingSoundScape.ActiveSoundsByTag.ContainsKey( Tag ) )
 			{
 				foreach ( var item in SoundScape.PlayingSoundScape?.ActiveSoundsByTag[Tag] )
 				{
-					item.FadeVolumeTo( Volume, seconds );
+					item.FadeVolumeTo( Volume, seconds, steps );
 
 				}
 			}

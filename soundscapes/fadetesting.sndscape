@@ -6,14 +6,14 @@
 		SoundEntries = 
 		[
 			{
-				SoundTag = "Interior"
-				SoundFile = "indoor-factory-ambient"
-				Volume = [ 1.0, 1.0, 0.0 ]
-			},
-			{
 				SoundFile = "outdoor-birds"
 				SoundTag = "Exterior"
 				Volume = [ 0.0, 1.0, 0.0 ]
+			},
+			{
+				SoundTag = "Interior"
+				SoundFile = "indoor-factory-ambient"
+				Volume = [ 1.0, 1.0, 0.0 ]
 			},
 		]
 	}

@@ -6,5 +6,11 @@
 		[
 			"sounds/freesounds_testing/leoctiurs__57-indoor-environment-factory.vsnd",
 		]
+		UI = false
+		Volume = 5.0
+		VolumeRandom = 0.0
+		Pitch = 1.0
+		PitchRandom = 0.0
+		DistanceMax = 10000.0
 	}
 }

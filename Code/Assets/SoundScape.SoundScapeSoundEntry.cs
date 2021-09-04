@@ -88,12 +88,12 @@ namespace Sandbox
 
 			public void UpdateSound()
 			{
+				if ( SoundScapeEntity.DebugSoundscapes ) DebugOverlay.Sphere( LastPosition, 16, Color.Blue, false );
 				if ( localspace )
 				{
 					LastPosition = GeneratedPosition + Origin;
 					SoundInstance.SetPosition( LastPosition );
 				}
-				if ( SoundScapeEntity.DebugSoundscapes ) DebugOverlay.Sphere( LastPosition, 16, Color.Blue, false );
 				//Log.Error( Generated + " IDK " + ToRepeatTime );
 				if ( RepeatTime.x != -1f && Generated > ToRepeatTime ) StartSound();
 			}
