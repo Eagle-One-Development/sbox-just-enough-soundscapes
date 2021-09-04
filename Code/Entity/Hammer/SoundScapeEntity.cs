@@ -13,11 +13,6 @@ namespace Sandbox
 		[ClientVar( "jess_debug_soundscape" )]
 		public static bool DebugSoundscapes { get; set; } = false;
 
-		public SoundScapeEntity()
-		{
-			Event.Register( this );
-		}
-
 		[Property, Net]
 		public int Radius { get; set; } = 128;
 		[Property, Net]
