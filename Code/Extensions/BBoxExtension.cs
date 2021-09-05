@@ -92,7 +92,7 @@ namespace Gamelib.Extensions
 				if ( distanceX > box.Size.x * 0.5f ) distanceX = box.Size.x * 0.5f;
 				else if ( distanceX < -box.Size.x * 0.5f ) distanceX = -box.Size.x * 0.5f;
 
-				distanceY = Vector3.Dot( directionVector, transform.Rotation.Left );
+				distanceY = Vector3.Dot( directionVector, transform.Rotation.Right );
 				distanceY += directionVector.Normal.y * box.Size.y * 0.5f;
 				if ( distanceY > box.Size.y * 0.5f ) distanceY = box.Size.y * 0.5f;
 				else if ( distanceY < -box.Size.y * 0.5f ) distanceY = -box.Size.y * 0.5f;
@@ -109,7 +109,7 @@ namespace Gamelib.Extensions
 				if ( distanceX > box.Size.x * 0.5f ) distanceX = box.Size.x * 0.5f;
 				else if ( distanceX < -box.Size.x * 0.5f ) distanceX = -box.Size.x * 0.5f;
 
-				distanceY = Vector3.Dot( directionVector, transform.Rotation.Left );
+				distanceY = Vector3.Dot( directionVector, transform.Rotation.Right );
 				if ( distanceY > box.Size.y * 0.5f ) distanceY = box.Size.y * 0.5f;
 				else if ( distanceY < -box.Size.y * 0.5f ) distanceY = -box.Size.y * 0.5f;
 
@@ -118,7 +118,7 @@ namespace Gamelib.Extensions
 				else if ( distanceZ < -box.Size.z * 0.5f ) distanceZ = -box.Size.z * 0.5f;
 			}
 
-			return box.Center + distanceX * transform.Rotation.Forward + distanceY * transform.Rotation.Left + distanceZ * transform.Rotation.Up;
+			return box.Center + distanceX * transform.Rotation.Forward + distanceY * transform.Rotation.Right + distanceZ * transform.Rotation.Up;
 		}
 		public static Vector3 ClosestPointToWorldSpace( this BBox box, Transform transform, Vector3 point )
 		{

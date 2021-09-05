@@ -139,6 +139,18 @@ namespace Sandbox
 				}
 			}
 		}
+		public static void SetTagTo( string Tag, float Volume )
+		{
+
+			if ( PlayingSoundScape != null && PlayingSoundScape.ActiveSoundsByTag.ContainsKey( Tag ) )
+			{
+				foreach ( var item in SoundScape.PlayingSoundScape?.ActiveSoundsByTag[Tag] )
+				{
+					item.SetVolumeTo( Volume );
+
+				}
+			}
+		}
 
 	}
 }

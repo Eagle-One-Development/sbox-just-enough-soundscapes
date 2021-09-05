@@ -66,9 +66,9 @@
 ]
 
 // 
-// Sandbox.SoundScapeTagFaderDirectionalOBB : Sandbox.BaseSoundScapeFader 
+// Sandbox.SoundScapeTagMultiFaderOBB : Sandbox.SoundScapeTagFaderOBB 
 // 
-@PointClass box_oriented(inner_mins, inner_maxs) box_oriented(outer_mins, outer_maxs) drawangles( DirectionAngle, angles ) = snd_soundscape_fader_direction_obb_jess : ""
+@PointClass box_oriented(inner_mins, inner_maxs) box_oriented(outer_mins, outer_maxs) = snd_soundscape_multi_fader_obb_jess : ""
 [
 	inner_mins(vector) : "Inner Mins" :  "-50 -50 -50" :
 	inner_maxs(vector) : "Inner Maxs" :  "50 50 50" :
@@ -76,10 +76,9 @@
 	outer_maxs(vector) : "Outer Maxs" :  "100 100 100" :
 	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
-	directionangle(angle) : "Direction Angle" :  : ""
-	minvalue(float) : "Min Value" : 0 : ""
-	maxvalue(float) : "Max Value" : 0 : ""
-	fromtag(string) : "From Tag" :  : ""
+	fromtags(text_block) : "From Tags" :  : "Enter Tags seperated by ,"
+	minvalues(text_block) : "Min Values" :  : "Enter MinValues seperated by ,"
+	maxvalues(text_block) : "Max Values" :  : "Enter MaxValues seperated by ,"
 	soundscapeentity(target_destination) : "Soundscape Entity" :  : "Optional: If specified will only Fade if the current Soundscape is the specified one."
 	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 

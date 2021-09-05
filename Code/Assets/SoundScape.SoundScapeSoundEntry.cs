@@ -28,10 +28,7 @@ namespace Sandbox
 
 			public void StopSound()
 			{
-				if ( SoundInstance.Index != 0 )
-				{
-					SoundInstance.Stop();
-				}
+				SoundInstance.Stop();
 			}
 
 			public void StartSound()
@@ -110,6 +107,11 @@ namespace Sandbox
 					CurrentVolume = initialVolume - (i * volumeMod / steps);
 					await GameTask.DelaySeconds( seconds / steps );
 				}
+			}
+			public void SetVolumeTo( float volume )
+			{
+				SoundInstance.SetVolume( volume );
+				CurrentVolume = volume;
 			}
 		}
 

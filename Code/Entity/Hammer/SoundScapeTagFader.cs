@@ -12,8 +12,8 @@ namespace Sandbox
 		[ClientVar( "jess_debug_fader" )]
 		public static bool DebugFader { get; set; } = false;
 
-		[Property, Net] public float MinValue { get; set; } = 0.0f;
-		[Property, Net] public float MaxValue { get; set; } = 1.0f;
+		[Property, Net] public float MinValue { get; set; } = 0f;
+		[Property, Net] public float MaxValue { get; set; } = 1f;
 
 
 
@@ -178,8 +178,8 @@ namespace Sandbox
 		[Property( Hammer = false ), Net] public Vector3 outer_maxs { get; set; } = new( 500 );
 
 
-		BBox innerbbox;
-		BBox outerbbox;
+		protected BBox innerbbox;
+		protected BBox outerbbox;
 
 		public float CurrentValue = 0f;
 
@@ -267,19 +267,141 @@ namespace Sandbox
 
 
 	}
-	[Library( "snd_soundscape_fader_direction_obb_jess" ), BoxOrient( "inner_mins", "inner_maxs", 50 ), BoxOrient( "outer_mins", "outer_maxs", 100 ), DrawAngles( "DirectionAngle", "angles" )]
-	public partial class SoundScapeTagFaderDirectionalOBB : BaseSoundScapeFader
+	[Library( "snd_soundscape_multi_fader_obb_jess" )]
+	public partial class SoundScapeTagMultiFaderOBB : SoundScapeTagFaderOBB
 	{
-		[Property( Hammer = false ), Net] public Vector3 inner_mins { get; set; } = new( -1000 );
-		[Property( Hammer = false ), Net] public Vector3 inner_maxs { get; set; } = new( 1000 );
-		[Property( Hammer = false ), Net] public Vector3 outer_mins { get; set; } = new( -500 );
-		[Property( Hammer = false ), Net] public Vector3 outer_maxs { get; set; } = new( 500 );
-		[Property, Net] public Angles DirectionAngle { get; set; } = new( Vector3.Forward.EulerAngles );
+		public new string FromTag { get; set; }
+		public new float MinValue { get; set; } = 0f;
+		public new float MaxValue { get; set; } = 1f;
+
+		/// <summary>
+		/// Enter Tags seperated by ,
+		/// </summary>
+		[Property( FGDType = "text_block" ), Net] public string FromTags { get; set; }
+		/// <summary>
+		/// Enter MinValues seperated by ,
+		/// </summary>
+		[Property( FGDType = "text_block" ), Net] public string MinValues { get; set; }
+		/// <summary>
+		/// Enter MaxValues seperated by ,
+		/// </summary>
+		[Property( FGDType = "text_block" ), Net] public string MaxValues { get; set; }
+
+		string[] tags;
+		float[] minValues;
+		float[] maxValues;
+
+
+		float[] currentValues;
+
+
+
+		public override void ClientSpawn()
+		{
+			base.ClientSpawn();
+
+			tags = FromTags.Replace( '\n', ' ' ).Split( ',' );
+			int index = 0;
+			minValues = new float[tags.Length];
+			foreach ( var item in MinValues.Replace( '\n', ' ' ).Split( ',' ) )
+			{
+				if ( index < tags.Length )
+					minValues[index] = StringX.ToFloat( item.Trim() );
+				index++;
+			}
+
+			maxValues = new float[tags.Length];
+			index = 0;
+			foreach ( var item in MaxValues.Replace( '\n', ' ' ).Split( ',' ) )
+			{
+				if ( index < tags.Length )
+					maxValues[index] = StringX.ToFloat( item.Trim() );
+				index++;
+			}
+
+			currentValues = new float[tags.Length];
+		}
+
 
 		[Event.Tick.Client]
-		public void ClientTick()
+		public new void ClientTick()
 		{
-			if ( !IsEnabled ) return;
+			if ( !IsEnabled || Local.Pawn == null ) return;
+
+			if ( DebugFader )
+			{
+				var outerbboxWorld = outerbbox.ToWorldSpace( this );
+				DebugOverlay.Box( outerbboxWorld.Mins, outerbboxWorld.Maxs, Color.White, 0f );
+				var innerbboxWorld = innerbbox.ToWorldSpace( this );
+				DebugOverlay.Box( innerbboxWorld.Mins, innerbboxWorld.Maxs, Color.Blue, 0f );
+				for ( int i = 0; i < currentValues.Length; i++ )
+				{
+					DebugOverlay.ScreenText( i, $"Tag:{tags[i].Trim()} ,CurrentValue: {currentValues[i]} , MinValue : {minValues[i]} ,  MaxValue :{maxValues[i]}" );
+				}
+			}
+
+			var Eyepos = Local.Pawn.EyePos;
+			if ( outerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
+			{
+				IsInside = true;
+
+				var innerPoint = innerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePos );
+				var outerPoint = outerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePos );
+				if ( DebugFader )
+				{
+					DebugOverlay.Line( innerPoint, outerPoint );
+				}
+				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
+				{
+					for ( int i = 0; i < currentValues.Length; i++ )
+					{
+						currentValues[i] = maxValues[i];
+					}
+					return;
+				}
+
+				for ( int i = 0; i < currentValues.Length; i++ )
+				{
+					currentValues[i] = MathX.LerpTo( maxValues[i], minValues[i], (innerPoint - Local.Pawn.EyePos).Length.Remap( 0, (innerPoint - outerPoint).Length, 0, 1 ) );
+				}
+				if ( DebugFader ) DebugOverlay.Line( innerPoint, Local.Pawn.EyePos );
+
+
+				if ( (soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity) || !soundScapeEntity.IsValid() )
+				{
+					for ( int i = 0; i < currentValues.Length; i++ )
+					{
+						float item = currentValues[i];
+						SoundScape.SetTagTo( tags[i].Trim(), item );
+					}
+				}
+
+			}
+			else if ( IsInside )
+			{
+				IsInside = false;
+
+				for ( int i = 0; i < currentValues.Length; i++ )
+				{
+					currentValues[i] = minValues[i];
+				}
+				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
+				{
+					for ( int i = 0; i < currentValues.Length; i++ )
+					{
+						currentValues[i] = maxValues[i];
+					}
+				}
+
+				if ( (soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity) || !soundScapeEntity.IsValid() )
+				{
+					for ( int i = 0; i < currentValues.Length; i++ )
+					{
+						float item = currentValues[i];
+						SoundScape.SetTagTo( tags[i].Trim(), item );
+					}
+				}
+			}
 		}
 
 
