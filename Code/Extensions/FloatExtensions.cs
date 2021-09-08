@@ -1,4 +1,4 @@
-namespace Soundscape.Util
+namespace Soundscape.Extensions
 {
 	public static class FloatExtensions
 	{
