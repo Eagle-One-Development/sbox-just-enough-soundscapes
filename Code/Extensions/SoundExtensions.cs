@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Sandbox;
 
-namespace Sandbox
+namespace Soundscape.Extensions
 {
 	public static class SoundExtensions
 	{

@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
-using Gamelib.Extensions;
+using Soundscape.Extensions;
 using Hammer;
+using Soundscape.Util;
 
 namespace Sandbox
 {
@@ -406,12 +407,7 @@ namespace Sandbox
 
 
 	}
-
-	public static class FloatExtensions
-	{
-		public static float Remap( this float input, float inputMin, float inputMax, float min, float max )
-		{
-			return min + (input - inputMin) * (max - min) / (inputMax - inputMin);
-		}
-	}
 }
+
+
+

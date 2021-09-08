@@ -1,7 +1,7 @@
 ﻿using System;
 using Sandbox;
 
-namespace Gamelib.Extensions
+namespace Soundscape.Extensions
 {
 	public static class BBoxExtension
 	{
