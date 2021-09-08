@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using Soundscape.Extensions;
 using Hammer;
-using Soundscape.Util;
 
 namespace Sandbox
 {
