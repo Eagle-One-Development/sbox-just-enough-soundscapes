@@ -5,6 +5,7 @@ using Hammer;
 
 namespace Sandbox
 {
+	[Skip] //SKIP Entity
 	[Library( "snd_soundscape_jess" )]
 	[EditorSprite( "editor/env_soundscape.vmat" )]
 	[Sphere( "Radius", 16777215, false )]

@@ -7,6 +7,7 @@ using Hammer;
 namespace Sandbox
 {
 
+	[Skip] //SKIP Entity
 	public abstract partial class BaseSoundScapeFader : Entity
 	{
 		[ClientVar( "jess_debug_fader" )]
@@ -94,6 +95,7 @@ namespace Sandbox
 		}
 
 	}
+
 	[Library( "snd_soundscape_fader_point_jess" ), Sphere( "InnerRadius", 77, 147, 191 ), Sphere( "OuterRadius", 255, 255, 255 )]
 	public partial class SoundScapeTagFaderPoint : BaseSoundScapeFader
 	{
