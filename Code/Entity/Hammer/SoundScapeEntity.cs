@@ -108,20 +108,23 @@ namespace Sandbox
 		[Event.Tick.Client]
 		public void ClientTick()
 		{
-			SoundScape.Origin = (Local.Pawn.Camera as Camera).Pos;
-			var Eyepos = Local.Pawn.EyePos;
-			if ( Position.Distance( Eyepos ) < Radius && SoundScape.SoundScapeEntity != this && (NeedsLineOfSight && !Trace.Ray( Position, Eyepos ).Ignore( Local.Pawn ).Run().Hit || !NeedsLineOfSight) )
+			if ( Local.Pawn.IsValid() && Local.Pawn.Camera is Camera cama )
 			{
-				if ( SoundScape.SoundScapeEntity?.Position.Distance( Eyepos ) < Position.Distance( Eyepos ) )
+				SoundScape.Origin = cama.Pos;
+				var Eyepos = Local.Pawn.EyePos;
+				if ( Position.Distance( Eyepos ) < Radius && SoundScape.SoundScapeEntity != this && (NeedsLineOfSight && !Trace.Ray( Position, Eyepos ).Ignore( Local.Pawn ).Run().Hit || !NeedsLineOfSight) )
 				{
-					if ( DebugSoundscapes ) DebugOverlay.Sphere( Position, Radius, Color.Gray );
-					return;
+					if ( SoundScape.SoundScapeEntity?.Position.Distance( Eyepos ) < Position.Distance( Eyepos ) )
+					{
+						if ( DebugSoundscapes ) DebugOverlay.Sphere( Position, Radius, Color.Gray );
+						return;
+					}
+					SoundScape.StartSoundScape( this );
 				}
-				SoundScape.StartSoundScape( this );
-			}
-			else
-			{
-				if ( DebugSoundscapes ) DebugOverlay.Sphere( Position, Radius, Color.Red );
+				else
+				{
+					if ( DebugSoundscapes ) DebugOverlay.Sphere( Position, Radius, Color.Red );
+				}
 			}
 		}
 
