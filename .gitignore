@@ -12,6 +12,12 @@ omnisharp.json
 *.vscode
 *_bakeresourcecache.vpk
 *.csproj
+*.sapaths
+*.sareverb
+
+code/minimal/
+sounds/
+soundscapes/
 
 *.bat
 *.los
