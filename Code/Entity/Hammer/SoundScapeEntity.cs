@@ -51,13 +51,13 @@ namespace Sandbox
 
 		public async void GetPositions()
 		{
-			await GameTask.Delay( 100 );
+			await GameTask.NextPhysicsFrame();
 			var props = Reflection.GetProperties( this );
 			foreach ( var item in props )
 			{
 				if ( item.Name.StartsWith( "SoundPosition" ) )
 				{
-					if ( item.Value != null && FindByName( item.Value.ToString() ) is Entity ent )
+					if ( item.GetValue( this ) != null && FindByName( item.GetValue( this )?.ToString() ) is Entity ent )
 						SoundPositions.Add( ent.Position );
 					else SoundPositions.Add( new() );
 				}
