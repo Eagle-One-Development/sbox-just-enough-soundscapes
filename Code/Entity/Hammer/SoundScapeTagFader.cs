@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using Soundscape.Extensions;
 using Hammer;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Sandbox
 {
@@ -13,17 +15,34 @@ namespace Sandbox
 		[ClientVar( "jess_debug_fader" )]
 		public static bool DebugFader { get; set; } = false;
 
-		[Property, Net] public float MinValue { get; set; } = 0f;
-		[Property, Net] public float MaxValue { get; set; } = 1f;
+		/// <summary>
+		/// Seperated by , uses TagList Internally
+		/// </summary>
+		[Property, FGDType( "string" )] public TagList FromTag { get; set; } = new();
+		/// <summary>
+		/// Seperated by , uses TagList Internally
+		/// </summary>
+		[Property, FGDType( "string" )] public TagList MinValues { get; set; } = new();
+		/// <summary>
+		/// Seperated by , uses TagList Internally
+		/// </summary>
+		[Property, FGDType( "string" )] public TagList MaxValues { get; set; } = new();
+
+		[Net] public List<string> fromTags { get; set; }
+		[Net] public List<float> minValues { get; set; }
+		[Net] public List<float> maxValues { get; set; }
 
 
 
-		[Property, Net] public string FromTag { get; set; }
+
+		public float[] CurrentValues;
+
+
 		/// <summary>
 		/// Optional:
 		/// If specified will only Fade if the current Soundscape is the specified one.
 		/// </summary>
-		[Property( FGDType = "target_destination" ), Net] public string SoundscapeEntity { get; set; }
+		[Property, FGDType( "target_destination" ), Net] public string SoundscapeEntity { get; set; }
 
 		public SoundScapeEntity soundScapeEntity;
 
@@ -34,12 +53,22 @@ namespace Sandbox
 		{
 			base.Spawn();
 			Transmit = TransmitType.Always;
+
+			fromTags = FromTag.ToList();
+
+			for ( int i = 0; i < fromTags.Count; i++ )
+			{
+				minValues.Add( MinValues.ElementAtOrDefault( i ).ToFloat() );
+				maxValues.Add( MaxValues.ElementAtOrDefault( i ).ToFloat( 1f ) );
+			}
 		}
 
 		public override void ClientSpawn()
 		{
 			base.ClientSpawn();
 			GetSoundscapeEntity();
+
+			CurrentValues = new float[fromTags.Count];
 		}
 
 		private async void GetSoundscapeEntity()
@@ -84,14 +113,12 @@ namespace Sandbox
 		[ClientRpc]
 		public void SetTagValueCL( bool state, float time )
 		{
-			if ( state )
+			for ( int i = 0; i < fromTags.Count; i++ )
 			{
-				SoundScape.FadeTagTo( FromTag, MaxValue, time );
+
+				SoundScape.FadeTagTo( fromTags[i], state ? maxValues[i] : minValues[i], time );
 			}
-			else
-			{
-				SoundScape.FadeTagTo( FromTag, MinValue, time );
-			}
+
 		}
 
 	}
@@ -109,8 +136,6 @@ namespace Sandbox
 
 		public float InnerRadiusSqrt;
 		public float OuterRadiusSqrt;
-
-		public float CurrentValue = 0f;
 
 		public override void ClientSpawn()
 		{
@@ -130,36 +155,40 @@ namespace Sandbox
 			{
 				DebugOverlay.Sphere( Position, InnerRadius, Color.FromBytes( 77, 147, 191 ) );
 				DebugOverlay.Sphere( Position, OuterRadius, Color.FromBytes( 255, 255, 255 ) );
-				DebugOverlay.ScreenText( 0, $"{CurrentValue}" );
 			}
 			var Eyepos = Local.Pawn.EyePos;
 			if ( (Eyepos - Position).LengthSquared < OuterRadiusSqrt )
 			{
-				CurrentValue = MathX.LerpTo( MinValue, MaxValue, (Eyepos - Position).LengthSquared.Remap( InnerRadiusSqrt, OuterRadiusSqrt, 0f, 1f ) );
-				if ( CurrentValue.AlmostEqual( MinValue, 0.1f ) ) CurrentValue = MinValue;
-				IsInside = true;
+				for ( int i = 0; i < fromTags.Count; i++ )
+				{
+					string tag = fromTags[i];
 
-				if ( soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity )
-				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, 0f );
-				}
-				else if ( !soundScapeEntity.IsValid() )
-				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, 0f );
+					CurrentValues[i] = MathX.LerpTo( minValues[i], maxValues[i], (Eyepos - Position).LengthSquared.Remap( InnerRadiusSqrt, OuterRadiusSqrt, 0f, 1f ) );
+					if ( CurrentValues[i].AlmostEqual( minValues[i], 0.1f ) ) CurrentValues[i] = minValues[i];
+					IsInside = true;
+
+					if ( (soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity) || !soundScapeEntity.IsValid() )
+					{
+
+						SoundScape.FadeTagTo( tag, CurrentValues[i], 0f );
+
+					}
 				}
 			}
 			else if ( IsInside )
 			{
-				CurrentValue = MaxValue;
-				IsInside = false;
+				for ( int i = 0; i < fromTags.Count; i++ )
+				{
+					string tag = fromTags[i];
+					CurrentValues[i] = maxValues[i];
+					IsInside = false;
 
-				if ( soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity )
-				{
-					SoundScape.FadeTagTo( FromTag, MaxValue, 0f );
-				}
-				else if ( !soundScapeEntity.IsValid() )
-				{
-					SoundScape.FadeTagTo( FromTag, MaxValue, 0f );
+					if ( (soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity) || !soundScapeEntity.IsValid() )
+					{
+
+						SoundScape.FadeTagTo( tag, maxValues[i], 0f );
+
+					}
 				}
 			}
 
@@ -174,10 +203,10 @@ namespace Sandbox
 	[Library( "snd_soundscape_fader_obb_jess" ), BoxOrient( "inner_mins", "inner_maxs", 50 ), BoxOrient( "outer_mins", "outer_maxs", 100 )]
 	public partial class SoundScapeTagFaderOBB : BaseSoundScapeFader
 	{
-		[Property( Hammer = false ), Net] public Vector3 inner_mins { get; set; } = new( -1000 );
-		[Property( Hammer = false ), Net] public Vector3 inner_maxs { get; set; } = new( 1000 );
-		[Property( Hammer = false ), Net] public Vector3 outer_mins { get; set; } = new( -500 );
-		[Property( Hammer = false ), Net] public Vector3 outer_maxs { get; set; } = new( 500 );
+		[Property, Skip, Net] public Vector3 inner_mins { get; set; } = new( -1000 );
+		[Property, Skip, Net] public Vector3 inner_maxs { get; set; } = new( 1000 );
+		[Property, Skip, Net] public Vector3 outer_mins { get; set; } = new( -500 );
+		[Property, Skip, Net] public Vector3 outer_maxs { get; set; } = new( 500 );
 
 
 		protected BBox innerbbox;
@@ -203,142 +232,9 @@ namespace Sandbox
 				DebugOverlay.Box( outerbboxWorld.Mins, outerbboxWorld.Maxs, Color.White, 0f );
 				var innerbboxWorld = innerbbox.ToWorldSpace( this );
 				DebugOverlay.Box( innerbboxWorld.Mins, innerbboxWorld.Maxs, Color.Blue, 0f );
-
-
-				DebugOverlay.ScreenText( CurrentValue.ToString() );
-			}
-
-			var Eyepos = Local.Pawn.EyePos;
-			if ( outerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
-			{
-				IsInside = true;
-
-				var innerPoint = innerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePos );
-				var outerPoint = outerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePos );
-				if ( DebugFader )
+				for ( int i = 0; i < fromTags.Count; i++ )
 				{
-					DebugOverlay.Line( innerPoint, outerPoint );
-					//DebugOverlay.ScreenText( 0, (innerPoint - outerPoint).Length.ToString() );
-					//DebugOverlay.ScreenText( 1, (innerPoint - Local.Pawn.EyePos).Length.ToString() );
-
-				}
-				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
-				{
-					CurrentValue = MaxValue;
-					return;
-				}
-
-
-				CurrentValue = MathX.LerpTo( MaxValue, MinValue, (innerPoint - Local.Pawn.EyePos).Length.Remap( 0, (innerPoint - outerPoint).Length, 0, 1 ) );
-				if ( DebugFader ) DebugOverlay.Line( innerPoint, Local.Pawn.EyePos );
-
-
-				if ( soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity )
-				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 10 );
-				}
-				else if ( !soundScapeEntity.IsValid() )
-				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 10 );
-				}
-
-
-
-			}
-			else if ( IsInside )
-			{
-				IsInside = false;
-
-				CurrentValue = MinValue;
-				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
-				{
-					CurrentValue = MaxValue;
-				}
-
-				if ( soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity )
-				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 1 );
-				}
-				else if ( !soundScapeEntity.IsValid() )
-				{
-					SoundScape.FadeTagTo( FromTag, CurrentValue, steps: 1 );
-				}
-			}
-		}
-
-
-
-	}
-	[Library( "snd_soundscape_multi_fader_obb_jess" )]
-	public partial class SoundScapeTagMultiFaderOBB : SoundScapeTagFaderOBB
-	{
-		public new string FromTag { get; set; }
-		public new float MinValue { get; set; } = 0f;
-		public new float MaxValue { get; set; } = 1f;
-
-		/// <summary>
-		/// Enter Tags seperated by ,
-		/// </summary>
-		[Property( FGDType = "text_block" ), Net] public string FromTags { get; set; }
-		/// <summary>
-		/// Enter MinValues seperated by ,
-		/// </summary>
-		[Property( FGDType = "text_block" ), Net] public string MinValues { get; set; }
-		/// <summary>
-		/// Enter MaxValues seperated by ,
-		/// </summary>
-		[Property( FGDType = "text_block" ), Net] public string MaxValues { get; set; }
-
-		string[] tags;
-		float[] minValues;
-		float[] maxValues;
-
-
-		float[] currentValues;
-
-
-
-		public override void ClientSpawn()
-		{
-			base.ClientSpawn();
-
-			tags = FromTags.Replace( '\n', ' ' ).Split( ',' );
-			int index = 0;
-			minValues = new float[tags.Length];
-			foreach ( var item in MinValues.Replace( '\n', ' ' ).Split( ',' ) )
-			{
-				if ( index < tags.Length )
-					minValues[index] = StringX.ToFloat( item.Trim() );
-				index++;
-			}
-
-			maxValues = new float[tags.Length];
-			index = 0;
-			foreach ( var item in MaxValues.Replace( '\n', ' ' ).Split( ',' ) )
-			{
-				if ( index < tags.Length )
-					maxValues[index] = StringX.ToFloat( item.Trim() );
-				index++;
-			}
-
-			currentValues = new float[tags.Length];
-		}
-
-
-		[Event.Tick.Client]
-		public new void ClientTick()
-		{
-			if ( !IsEnabled || Local.Pawn == null ) return;
-
-			if ( DebugFader )
-			{
-				var outerbboxWorld = outerbbox.ToWorldSpace( this );
-				DebugOverlay.Box( outerbboxWorld.Mins, outerbboxWorld.Maxs, Color.White, 0f );
-				var innerbboxWorld = innerbbox.ToWorldSpace( this );
-				DebugOverlay.Box( innerbboxWorld.Mins, innerbboxWorld.Maxs, Color.Blue, 0f );
-				for ( int i = 0; i < currentValues.Length; i++ )
-				{
-					DebugOverlay.ScreenText( i, $"Tag:{tags[i].Trim()} ,CurrentValue: {currentValues[i]} , MinValue : {minValues[i]} ,  MaxValue :{maxValues[i]}" );
+					DebugOverlay.ScreenText( i, $"Tag:{fromTags[i].Trim()} ,CurrentValue: {CurrentValues[i]} , MinValue : {minValues[i]} ,  MaxValue :{maxValues[i]}" );
 				}
 			}
 
@@ -355,26 +251,26 @@ namespace Sandbox
 				}
 				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
 				{
-					for ( int i = 0; i < currentValues.Length; i++ )
+					for ( int i = 0; i < fromTags.Count; i++ )
 					{
-						currentValues[i] = maxValues[i];
+						CurrentValues[i] = maxValues[i];
 					}
 					return;
 				}
 
-				for ( int i = 0; i < currentValues.Length; i++ )
+				for ( int i = 0; i < fromTags.Count; i++ )
 				{
-					currentValues[i] = MathX.LerpTo( maxValues[i], minValues[i], (innerPoint - Local.Pawn.EyePos).Length.Remap( 0, (innerPoint - outerPoint).Length, 0, 1 ) );
+					CurrentValues[i] = MathX.LerpTo( maxValues[i], minValues[i], (innerPoint - Local.Pawn.EyePos).Length.Remap( 0, (innerPoint - outerPoint).Length, 0, 1 ) );
 				}
 				if ( DebugFader ) DebugOverlay.Line( innerPoint, Local.Pawn.EyePos );
 
 
 				if ( (soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity) || !soundScapeEntity.IsValid() )
 				{
-					for ( int i = 0; i < currentValues.Length; i++ )
+					for ( int i = 0; i < fromTags.Count; i++ )
 					{
-						float item = currentValues[i];
-						SoundScape.SetTagTo( tags[i].Trim(), item );
+						float item = CurrentValues[i];
+						SoundScape.SetTagTo( fromTags[i].Trim(), item );
 					}
 				}
 
@@ -383,28 +279,29 @@ namespace Sandbox
 			{
 				IsInside = false;
 
-				for ( int i = 0; i < currentValues.Length; i++ )
+				for ( int i = 0; i < fromTags.Count; i++ )
 				{
-					currentValues[i] = minValues[i];
+					CurrentValues[i] = minValues[i];
 				}
 				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
 				{
-					for ( int i = 0; i < currentValues.Length; i++ )
+					for ( int i = 0; i < fromTags.Count; i++ )
 					{
-						currentValues[i] = maxValues[i];
+						CurrentValues[i] = maxValues[i];
 					}
 				}
 
 				if ( (soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity) || !soundScapeEntity.IsValid() )
 				{
-					for ( int i = 0; i < currentValues.Length; i++ )
+					for ( int i = 0; i < fromTags.Count; i++ )
 					{
-						float item = currentValues[i];
-						SoundScape.SetTagTo( tags[i].Trim(), item );
+						float item = CurrentValues[i];
+						SoundScape.SetTagTo( fromTags[i].Trim(), item );
 					}
 				}
 			}
 		}
+
 
 
 	}

@@ -65,13 +65,18 @@ namespace Sandbox
 			{
 				item.StartSound();
 
-				if ( string.IsNullOrEmpty( item.SoundTag ) ) continue;
-				if ( !ActiveSoundsByTag.ContainsKey( item.SoundTag ) ) ActiveSoundsByTag.Add( item.SoundTag, new() );
-
-				if ( ActiveSoundsByTag.TryGetValue( item.SoundTag, out List<SoundScapeSoundEntry> entryList ) )
+				if ( !item.SoundTag.Any() ) continue;
+				foreach ( var tag in item.SoundTag )
 				{
-					entryList.Add( item );
+					string t = tag.ToString();
+					if ( !ActiveSoundsByTag.ContainsKey( t ) ) ActiveSoundsByTag.Add( t, new() );
+					if ( ActiveSoundsByTag.TryGetValue( t, out List<SoundScapeSoundEntry> entryList ) )
+					{
+						entryList.Add( item );
+					}
+
 				}
+
 			}
 			Event.Register( this );
 			return this;

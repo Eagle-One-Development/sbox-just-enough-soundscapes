@@ -1,10 +1,23 @@
-// 
-// Sandbox.SoundScapeEntity
-// 
-@PointClass iconsprite( "editor/env_soundscape.vmat" ) sphere( Radius ) = snd_soundscape_jess : ""
+
+@BaseClass = BaseProperties_sbox_soundscapes
 [
-	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
 	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	parentAttachmentName(parentAttachment) [ group="Hierarchy" ] : "Parent Model Bone/Attachment Name" : : "The name of the bone or attachment to attach to on the entity's parent in the movement hierarchy. Use !bonemerge to use bone-merge style attachment."
+
+	useLocalOffset(boolean) [ group="Hierarchy" ] : "Use Model Attachment offsets" : 0 : "Whether to respect the specified local offset when doing the initial hierarchical attachment to its parent."
+	local.origin(vector) [ group="Hierarchy" ] : "Model Attachment position offset" : : "Offset in the local space of the parent model's attachment/bone to use in hierarchy. Not used if you are not using parent attachment."
+	local.angles(angle) [ group="Hierarchy" ] : "Model Attachment angular offset" : : "Angular offset in the local space of the parent model's attachment/bone to use in hierarchy. Not used if you are not using parent attachment."
+	local.scales(vector) [ group="Hierarchy" ] : "Model Attachment scale" : : "Scale in the local space of the parent model's attachment/bone to use in hierarchy. Not used if you are not using parent attachment."
+
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	tags(tags) : "Tags" : "" : "A list of general purpose tags for this entity, for interactions with other entities such as triggers."
+]
+
+//
+// Sandbox.SoundScapeEntity
+//
+@PointClass base(BaseProperties_sbox_soundscapes) iconsprite( "editor/env_soundscape.vmat" ) sphere( "Radius" ) = snd_soundscape_jess : ""
+[
 	radius(integer) : "Radius" : 128 : ""
 	needslineofsight(boolean) : "Needs Line Of Sight" : 0 : ""
 	soundscape(string) : "Soundscape" :  : ""
@@ -21,18 +34,16 @@
 	input FadeTagTo(void) : "Input: Tag,Volume,Time  split by comma \n So like this: Exterior,0.5,5"
 ]
 
-// 
+//
 // Sandbox.SoundScapeTagFaderPoint
-// 
-@PointClass sphere( InnerRadius, 77, 147, 191 ) sphere( OuterRadius ) = snd_soundscape_fader_point_jess : ""
+//
+@PointClass base(BaseProperties_sbox_soundscapes) sphere( "InnerRadius", 77, 147, 191 ) sphere( "OuterRadius" ) = snd_soundscape_fader_point_jess : ""
 [
-	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
-	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
 	innerradius(float) : "Inner Radius" : 50 : ""
 	outerradius(float) : "Outer Radius" : 100 : ""
-	minvalue(float) : "Min Value" : 0 : ""
-	maxvalue(float) : "Max Value" : 1 : ""
-	fromtag(string) : "From Tag" :  : ""
+	fromtag(string) : "From Tag" :  : "Seperated by , uses TagList Internally"
+	minvalues(string) : "Min Values" :  : "Seperated by , uses TagList Internally"
+	maxvalues(string) : "Max Values" :  : "Seperated by , uses TagList Internally"
 	soundscapeentity(target_destination) : "Soundscape Entity" :  : "Optional: If specified will only Fade if the current Soundscape is the specified one."
 	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 
@@ -42,43 +53,18 @@
 	input SetMaxValue(void) : ""
 ]
 
-// 
+//
 // Sandbox.SoundScapeTagFaderOBB
-// 
-@PointClass box_oriented(inner_mins, inner_maxs) box_oriented(outer_mins, outer_maxs) = snd_soundscape_fader_obb_jess : ""
+//
+@PointClass base(BaseProperties_sbox_soundscapes) box_oriented(inner_mins, inner_maxs) box_oriented(outer_mins, outer_maxs) = snd_soundscape_fader_obb_jess : ""
 [
 	inner_mins(vector) : "Inner Mins" :  "-50 -50 -50" :
 	inner_maxs(vector) : "Inner Maxs" :  "50 50 50" :
 	outer_mins(vector) : "Outer Mins" :  "-100 -100 -100" :
 	outer_maxs(vector) : "Outer Maxs" :  "100 100 100" :
-	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
-	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
-	minvalue(float) : "Min Value" : 0 : ""
-	maxvalue(float) : "Max Value" : 1 : ""
-	fromtag(string) : "From Tag" :  : ""
-	soundscapeentity(target_destination) : "Soundscape Entity" :  : "Optional: If specified will only Fade if the current Soundscape is the specified one."
-	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
-
-	input EnableFader(void) : ""
-	input DisableFader(void) : ""
-	input SetMinValue(void) : ""
-	input SetMaxValue(void) : ""
-]
-
-// 
-// Sandbox.SoundScapeTagMultiFaderOBB
-// 
-@PointClass box_oriented(inner_mins, inner_maxs) box_oriented(outer_mins, outer_maxs) = snd_soundscape_multi_fader_obb_jess : ""
-[
-	inner_mins(vector) : "Inner Mins" :  "-50 -50 -50" :
-	inner_maxs(vector) : "Inner Maxs" :  "50 50 50" :
-	outer_mins(vector) : "Outer Mins" :  "-100 -100 -100" :
-	outer_maxs(vector) : "Outer Maxs" :  "100 100 100" :
-	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
-	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
-	fromtags(text_block) : "From Tags" :  : "Enter Tags seperated by ,"
-	minvalues(text_block) : "Min Values" :  : "Enter MinValues seperated by ,"
-	maxvalues(text_block) : "Max Values" :  : "Enter MaxValues seperated by ,"
+	fromtag(string) : "From Tag" :  : "Seperated by , uses TagList Internally"
+	minvalues(string) : "Min Values" :  : "Seperated by , uses TagList Internally"
+	maxvalues(string) : "Max Values" :  : "Seperated by , uses TagList Internally"
 	soundscapeentity(target_destination) : "Soundscape Entity" :  : "Optional: If specified will only Fade if the current Soundscape is the specified one."
 	enable_shadows(boolean) [ group="Render Properties" ] : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 

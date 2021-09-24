@@ -22,21 +22,21 @@ namespace Sandbox
 		[Property( "soundscape" ), Net]
 		public string SoundScapeFileName { get; set; }
 
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition0 { get; set; }
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition1 { get; set; }
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition2 { get; set; }
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition3 { get; set; }
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition4 { get; set; }
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition5 { get; set; }
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition6 { get; set; }
-		[Property( FGDType = "target_destination" ), Net]
+		[Property, FGDType( "target_destination" ), Net]
 		public string SoundPosition7 { get; set; }
 
 

@@ -5,7 +5,7 @@ namespace Sandbox
 		public class SoundScapeSoundEntry
 		{
 			public string SoundFile { get; set; }
-			public string SoundTag { get; set; }
+			public TagList SoundTag { get; set; }
 			public bool RandomPosition { get; set; }
 			public int SoundPositionIndex { get; set; }
 			public string SoundPositionEntityName { get; set; }
