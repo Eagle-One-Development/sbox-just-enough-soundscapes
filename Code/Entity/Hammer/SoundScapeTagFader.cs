@@ -123,7 +123,7 @@ namespace Sandbox
 
 	}
 
-	[Library( "snd_soundscape_fader_point_jess" ), Sphere( "InnerRadius", 77, 147, 191 ), Sphere( "OuterRadius", 255, 255, 255 )]
+	[Library( "snd_soundscape_fader_point_jess" ), Skip, Sphere( "InnerRadius", 77, 147, 191 ), Sphere( "OuterRadius", 255, 255, 255 )]
 	public partial class SoundScapeTagFaderPoint : BaseSoundScapeFader
 	{
 
@@ -200,7 +200,7 @@ namespace Sandbox
 
 
 	}
-	[Library( "snd_soundscape_fader_obb_jess" ), BoxOrient( "inner_mins", "inner_maxs", 50 ), BoxOrient( "outer_mins", "outer_maxs", 100 )]
+	[Library( "snd_soundscape_fader_obb_jess" ), Skip, BoxOrient( "inner_mins", "inner_maxs", 50 ), BoxOrient( "outer_mins", "outer_maxs", 100 )]
 	public partial class SoundScapeTagFaderOBB : BaseSoundScapeFader
 	{
 		[Property, Skip, Net] public Vector3 inner_mins { get; set; } = new( -1000 );
