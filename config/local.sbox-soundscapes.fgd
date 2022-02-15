@@ -1,0 +1,73 @@
+
+@BaseClass = BaseProperties_local_sbox_soundscapes
+[
+	parentname(target_destination) [ group="Hierarchy" ] : "Parent" : : "The name of this entity's parent in the movement hierarchy. Entities with parents move with their parent."
+	parentAttachmentName(parentAttachment) [ group="Hierarchy" ] : "Parent Model Bone/Attachment Name" : : "The name of the bone or attachment to attach to on the entity's parent in the movement hierarchy. Use !bonemerge to use bone-merge style attachment."
+
+	useLocalOffset(boolean) [ group="Hierarchy" ] : "Use Model Attachment offsets" : 0 : "Whether to respect the specified local offset when doing the initial hierarchical attachment to its parent."
+	local.origin(vector) [ group="Hierarchy" ] : "Model Attachment position offset" : : "Offset in the local space of the parent model's attachment/bone to use in hierarchy. Not used if you are not using parent attachment."
+	local.angles(angle) [ group="Hierarchy" ] : "Model Attachment angular offset" : : "Angular offset in the local space of the parent model's attachment/bone to use in hierarchy. Not used if you are not using parent attachment."
+	local.scales(vector) [ group="Hierarchy" ] : "Model Attachment scale" : : "Scale in the local space of the parent model's attachment/bone to use in hierarchy. Not used if you are not using parent attachment."
+
+	targetname(target_source) : "Name" : : "The name that other entities refer to this entity by."
+	tags(tags) : "Tags" : "" : "A list of general purpose tags for this entity, for interactions with other entities such as triggers."
+]
+
+//
+// Sandbox.SoundScapeEntity
+//
+@PointClass base(BaseProperties_local_sbox_soundscapes) iconsprite( "editor/env_soundscape.vmat" ) sphere( "Radius" ) = snd_soundscape_jess : ""
+[
+	radius(integer) : "Radius" : 128 : ""
+	needslineofsight(boolean) : "Needs Line Of Sight" : 0 : ""
+	soundscape(string) : "Sound Scape File Name" :  : ""
+	soundposition0(target_destination) : "Sound Position 0" :  : ""
+	soundposition1(target_destination) : "Sound Position 1" :  : ""
+	soundposition2(target_destination) : "Sound Position 2" :  : ""
+	soundposition3(target_destination) : "Sound Position 3" :  : ""
+	soundposition4(target_destination) : "Sound Position 4" :  : ""
+	soundposition5(target_destination) : "Sound Position 5" :  : ""
+	soundposition6(target_destination) : "Sound Position 6" :  : ""
+	soundposition7(target_destination) : "Sound Position 7" :  : ""
+
+	input FadeTagTo(string) : "Input: Tag,Volume,Time  split by comma \n So like this: Exterior,0.5,5"
+]
+
+//
+// Sandbox.SoundScapeTagFaderPoint
+//
+@PointClass base(BaseProperties_local_sbox_soundscapes) sphere( "InnerRadius", 77, 147, 191 ) sphere( "OuterRadius" ) = snd_soundscape_fader_point_jess : ""
+[
+	innerradius(float) : "Inner Radius" : "50" : ""
+	outerradius(float) : "Outer Radius" : "100" : ""
+	fromtag(string) : "From Tag" :  : "Seperated by , uses TagList Internally"
+	minvalues(string) : "Min Values" :  : "Seperated by , uses TagList Internally"
+	maxvalues(string) : "Max Values" :  : "Seperated by , uses TagList Internally"
+	soundscapeentity(target_destination) : "Soundscape Entity" :  : "Optional: If specified will only Fade if the current Soundscape is the specified one."
+
+	input EnableFader(void) : ""
+	input DisableFader(void) : ""
+	input SetMinValue(string) : ""
+	input SetMaxValue(string) : ""
+]
+
+//
+// Sandbox.SoundScapeTagFaderOBB
+//
+@PointClass base(BaseProperties_local_sbox_soundscapes) box_oriented(inner_mins, inner_maxs) box_oriented(outer_mins, outer_maxs) = snd_soundscape_fader_obb_jess : ""
+[
+	inner_mins(vector) : "Inner Mins" :  "-50 -50 -50" :
+	inner_maxs(vector) : "Inner Maxs" :  "50 50 50" :
+	outer_mins(vector) : "Outer Mins" :  "-100 -100 -100" :
+	outer_maxs(vector) : "Outer Maxs" :  "100 100 100" :
+	fromtag(string) : "From Tag" :  : "Seperated by , uses TagList Internally"
+	minvalues(string) : "Min Values" :  : "Seperated by , uses TagList Internally"
+	maxvalues(string) : "Max Values" :  : "Seperated by , uses TagList Internally"
+	soundscapeentity(target_destination) : "Soundscape Entity" :  : "Optional: If specified will only Fade if the current Soundscape is the specified one."
+
+	input EnableFader(void) : ""
+	input DisableFader(void) : ""
+	input SetMinValue(string) : ""
+	input SetMaxValue(string) : ""
+]
+
