@@ -154,14 +154,14 @@ namespace Sandbox
 				DebugOverlay.Sphere( Position, InnerRadius, Color.FromBytes( 77, 147, 191 ) );
 				DebugOverlay.Sphere( Position, OuterRadius, Color.FromBytes( 255, 255, 255 ) );
 			}
-			var Eyepos = Local.Pawn.EyePos;
-			if ( (Eyepos - Position).LengthSquared < OuterRadiusSqrt )
+			var EyePosition = Local.Pawn.EyePosition;
+			if ( (EyePosition - Position).LengthSquared < OuterRadiusSqrt )
 			{
 				for ( int i = 0; i < fromTags.Count; i++ )
 				{
 					string tag = fromTags[i];
 
-					CurrentValues[i] = MathX.LerpTo( minValues[i], maxValues[i], (Eyepos - Position).LengthSquared.Remap( InnerRadiusSqrt, OuterRadiusSqrt, 0f, 1f ) );
+					CurrentValues[i] = MathX.LerpTo( minValues[i], maxValues[i], (EyePosition - Position).LengthSquared.Remap( InnerRadiusSqrt, OuterRadiusSqrt, 0f, 1f ) );
 					if ( CurrentValues[i].AlmostEqual( minValues[i], 0.1f ) ) CurrentValues[i] = minValues[i];
 					IsInside = true;
 
@@ -236,18 +236,18 @@ namespace Sandbox
 				}
 			}
 
-			var Eyepos = Local.Pawn.EyePos;
-			if ( outerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
+			var EyePosition = Local.Pawn.EyePosition;
+			if ( outerbbox.Contains( new( Transform.PointToLocal( EyePosition ) ) ) )
 			{
 				IsInside = true;
 
-				var innerPoint = innerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePos );
-				var outerPoint = outerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePos );
+				var innerPoint = innerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePosition );
+				var outerPoint = outerbbox.ClosestPointToWorldSpace( Transform, Local.Pawn.EyePosition );
 				if ( DebugFader )
 				{
 					DebugOverlay.Line( innerPoint, outerPoint );
 				}
-				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
+				if ( innerbbox.Contains( new( Transform.PointToLocal( EyePosition ) ) ) )
 				{
 					for ( int i = 0; i < fromTags.Count; i++ )
 					{
@@ -258,9 +258,9 @@ namespace Sandbox
 
 				for ( int i = 0; i < fromTags.Count; i++ )
 				{
-					CurrentValues[i] = MathX.LerpTo( maxValues[i], minValues[i], (innerPoint - Local.Pawn.EyePos).Length.Remap( 0, (innerPoint - outerPoint).Length, 0, 1 ) );
+					CurrentValues[i] = MathX.LerpTo( maxValues[i], minValues[i], (innerPoint - Local.Pawn.EyePosition).Length.Remap( 0, (innerPoint - outerPoint).Length, 0, 1 ) );
 				}
-				if ( DebugFader ) DebugOverlay.Line( innerPoint, Local.Pawn.EyePos );
+				if ( DebugFader ) DebugOverlay.Line( innerPoint, Local.Pawn.EyePosition );
 
 
 				if ( (soundScapeEntity.IsValid() && SoundScape.SoundScapeEntity == soundScapeEntity) || !soundScapeEntity.IsValid() )
@@ -281,7 +281,7 @@ namespace Sandbox
 				{
 					CurrentValues[i] = minValues[i];
 				}
-				if ( innerbbox.Contains( new( Transform.PointToLocal( Eyepos ) ) ) )
+				if ( innerbbox.Contains( new( Transform.PointToLocal( EyePosition ) ) ) )
 				{
 					for ( int i = 0; i < fromTags.Count; i++ )
 					{

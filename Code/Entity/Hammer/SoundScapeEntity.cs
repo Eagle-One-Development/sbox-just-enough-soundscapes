@@ -109,11 +109,11 @@ namespace Sandbox
 		{
 			if ( Local.Pawn.IsValid() && Local.Pawn.Camera is Camera cama )
 			{
-				SoundScape.Origin = cama.Pos;
-				var Eyepos = Local.Pawn.EyePos;
-				if ( Position.Distance( Eyepos ) < Radius && SoundScape.SoundScapeEntity != this && (NeedsLineOfSight && !Trace.Ray( Position, Eyepos ).Ignore( Local.Pawn ).Run().Hit || !NeedsLineOfSight) )
+				SoundScape.Origin = cama.Position;
+				var EyePosition = Local.Pawn.EyePosition;
+				if ( Position.Distance( EyePosition ) < Radius && SoundScape.SoundScapeEntity != this && (NeedsLineOfSight && !Trace.Ray( Position, EyePosition ).Ignore( Local.Pawn ).Run().Hit || !NeedsLineOfSight) )
 				{
-					if ( SoundScape.SoundScapeEntity?.Position.Distance( Eyepos ) < Position.Distance( Eyepos ) )
+					if ( SoundScape.SoundScapeEntity?.Position.Distance( EyePosition ) < Position.Distance( EyePosition ) )
 					{
 						if ( DebugSoundscapes ) DebugOverlay.Sphere( Position, Radius, Color.Gray );
 						return;
