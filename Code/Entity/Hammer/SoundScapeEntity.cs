@@ -107,7 +107,7 @@ namespace Sandbox
 		[Event.Tick.Client]
 		public void ClientTick()
 		{
-			if ( Local.Pawn.IsValid() && Local.Pawn.Camera is Camera cama )
+			if ( Local.Pawn.IsValid() && Local.Pawn.Components.Get<CameraMode>() is CameraMode cama )
 			{
 				SoundScape.Origin = cama.Position;
 				var EyePosition = Local.Pawn.EyePosition;
