@@ -18,6 +18,7 @@ omnisharp.json
 code/minimal/
 sounds/
 soundscapes/
+/Maps/*
 
 *.bat
 *.los
@@ -34,3 +35,4 @@ soundscapes/
 *.vpcf_c
 
 .addon
+Maps
