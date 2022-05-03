@@ -1,3 +1,4 @@
+using System.Numerics;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
@@ -5,6 +6,9 @@ using Soundscape.Extensions;
 using Hammer;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using Sandbox.Internal;
 
 namespace Sandbox
 {
@@ -121,7 +125,10 @@ namespace Sandbox
 
 	}
 
-	[Library( "snd_soundscape_fader_point_jess" ), Sphere( "InnerRadius", 77, 147, 191 ), Sphere( "OuterRadius", 255, 255, 255 )]
+	[Library( "snd_soundscape_fader_point_jess" ),
+	Sphere( "InnerRadius", 77, 147, 191 ),
+	Sphere( "OuterRadius", 255, 255, 255 ),
+	Display( Name = "SoundScape Fader Point" ), Icon( MaterialIcon.GraphicEq ), Category( "SoundScape" )]
 	public partial class SoundScapeTagFaderPoint : BaseSoundScapeFader
 	{
 
@@ -198,13 +205,17 @@ namespace Sandbox
 
 
 	}
-	[Library( "snd_soundscape_fader_obb_jess" ), BoxOrient( "inner_mins", "inner_maxs", 50 ), BoxOrient( "outer_mins", "outer_maxs", 100 )]
+	[Library( "snd_soundscape_fader_obb_jess" ),
+	BoundsHelper( "inner_mins", "inner_maxs" ),
+	BoundsHelper( "outer_mins", "outer_maxs" ),
+	Display( Name = "SoundScape Fader Box" ), Icon( MaterialIcon.GraphicEq ), Category( "SoundScape" )]
 	public partial class SoundScapeTagFaderOBB : BaseSoundScapeFader
 	{
-		[Property, Skip, Net] public Vector3 inner_mins { get; set; } = new( -1000 );
-		[Property, Skip, Net] public Vector3 inner_maxs { get; set; } = new( 1000 );
-		[Property, Skip, Net] public Vector3 outer_mins { get; set; } = new( -500 );
-		[Property, Skip, Net] public Vector3 outer_maxs { get; set; } = new( 500 );
+
+		[Property, Net, Internal.DefaultValue( "-100 -100 -100" )] public Vector3 inner_mins { get; set; }
+		[Property, Net, Internal.DefaultValue( "100 100 100" )] public Vector3 inner_maxs { get; set; }
+		[Property, Net, Internal.DefaultValue( "-50 -50 -50" )] public Vector3 outer_mins { get; set; }
+		[Property, Net, Internal.DefaultValue( "50 50 50" )] public Vector3 outer_maxs { get; set; }
 
 
 		protected BBox innerbbox;

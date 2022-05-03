@@ -23,7 +23,7 @@ namespace MinimalExample
 			//
 			// Use ThirdPersonCamera (you can make your own Camera for 100% control)
 			//
-			Camera = new FirstPersonCamera();
+			CameraMode = new FirstPersonCamera();
 
 			EnableAllCollisions = true;
 			EnableDrawing = true;

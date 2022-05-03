@@ -9,5 +9,17 @@
   "ResourcePaths": null,
   "HasCode": true,
   "CodePath": "code",
-  "RootNamespace": "Sandbox"
+  "RootNamespace": "Sandbox",
+  "Metadata": {
+    "MapList": [
+      "facepunch.construct"
+    ],
+    "PerMapRanking": false,
+    "LeaderboardType": 0,
+    "RankType": 0,
+    "MapSelect": 0,
+    "GameNetworkType": 0,
+    "MaxPlayers": 0,
+    "MinPlayers": 0
+  }
 }
