@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using Soundscape.Extensions;
-using Hammer;
+using SandboxEditor;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +14,7 @@ namespace Sandbox
 {
 	public abstract partial class BaseSoundScapeFader : Entity
 	{
-		[ClientVar( "jess_debug_fader" )]
+		[ConVar.Client( "jess_debug_fader" )]
 		public static bool DebugFader { get; set; } = false;
 
 		/// <summary>
@@ -128,7 +128,7 @@ namespace Sandbox
 	[Library( "snd_soundscape_fader_point_jess" ),
 	Sphere( "InnerRadius", 77, 147, 191 ),
 	Sphere( "OuterRadius", 255, 255, 255 ),
-	Display( Name = "SoundScape Fader Point" ), Icon( MaterialIcon.GraphicEq ), Category( "SoundScape" )]
+	Display( Name = "SoundScape Fader Point" ), Icon( "graphic_eq" ), Category( "SoundScape" )]
 	public partial class SoundScapeTagFaderPoint : BaseSoundScapeFader
 	{
 
@@ -208,14 +208,14 @@ namespace Sandbox
 	[Library( "snd_soundscape_fader_obb_jess" ),
 	BoundsHelper( "inner_mins", "inner_maxs" ),
 	BoundsHelper( "outer_mins", "outer_maxs" ),
-	Display( Name = "SoundScape Fader Box" ), Icon( MaterialIcon.GraphicEq ), Category( "SoundScape" )]
+	Display( Name = "SoundScape Fader Box" ), Icon( "graphic_eq" ), Category( "SoundScape" )]
 	public partial class SoundScapeTagFaderOBB : BaseSoundScapeFader
 	{
 
-		[Property, Net, Internal.DefaultValue( "-100 -100 -100" )] public Vector3 inner_mins { get; set; }
-		[Property, Net, Internal.DefaultValue( "100 100 100" )] public Vector3 inner_maxs { get; set; }
-		[Property, Net, Internal.DefaultValue( "-50 -50 -50" )] public Vector3 outer_mins { get; set; }
-		[Property, Net, Internal.DefaultValue( "50 50 50" )] public Vector3 outer_maxs { get; set; }
+		[Property, Net, DefaultValue( "-100 -100 -100" )] public Vector3 inner_mins { get; set; }
+		[Property, Net, DefaultValue( "100 100 100" )] public Vector3 inner_maxs { get; set; }
+		[Property, Net, DefaultValue( "-50 -50 -50" )] public Vector3 outer_mins { get; set; }
+		[Property, Net, DefaultValue( "50 50 50" )] public Vector3 outer_maxs { get; set; }
 
 
 		protected BBox innerbbox;
@@ -243,7 +243,7 @@ namespace Sandbox
 				DebugOverlay.Box( innerbboxWorld.Mins, innerbboxWorld.Maxs, Color.Blue, 0f );
 				for ( int i = 0; i < fromTags.Count; i++ )
 				{
-					DebugOverlay.ScreenText( i, $"Tag:{fromTags[i].Trim()} ,CurrentValue: {CurrentValues[i]} , MinValue : {minValues[i]} ,  MaxValue :{maxValues[i]}" );
+					DebugOverlay.ScreenText( $"Tag:{fromTags[i].Trim()} ,CurrentValue: {CurrentValues[i]} , MinValue : {minValues[i]} ,  MaxValue :{maxValues[i]}", i );
 				}
 			}
 
