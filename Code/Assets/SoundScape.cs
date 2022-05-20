@@ -5,8 +5,8 @@ using System.Linq;
 
 namespace Sandbox
 {
-	[Library( "sndscape" )]
-	public partial class SoundScape : Asset
+	[GameResource( "SoundScape", "sndscape", "Create SoundScapes" )]
+	public partial class SoundScape : GameResource
 	{
 		public static Vector3 Origin = new();
 		public string[] SoundScapes { get; set; }

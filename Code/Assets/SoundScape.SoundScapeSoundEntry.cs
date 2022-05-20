@@ -85,7 +85,7 @@ namespace Sandbox
 
 			public void UpdateSound()
 			{
-				if ( SoundScapeEntity.DebugSoundscapes ) DebugOverlay.Sphere( LastPosition, 16, Color.Blue, false );
+				if ( SoundScapeEntity.DebugSoundscapes ) DebugOverlay.Sphere( LastPosition, 16, Color.Blue );
 				if ( localspace )
 				{
 					LastPosition = GeneratedPosition + Origin;

@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
-using Hammer;
+using SandboxEditor;
 
 
 namespace Sandbox
 {
-	[Skip] //SKIP Entity
+	[HammerEntity]
 	[Library( "snd_soundscape_jess" )]
 	[EditorSprite( "editor/env_soundscape.vmat" )]
 	[Sphere( "Radius", 16777215, false )]
 	public partial class SoundScapeEntity : Entity
 	{
-		[ClientVar( "jess_debug_soundscape" )]
+		[ConVar.Client( "jess_debug_soundscape" )]
 		public static bool DebugSoundscapes { get; set; } = false;
 
 		[Property, Net]
@@ -53,7 +53,7 @@ namespace Sandbox
 		public async void GetPositions()
 		{
 			await GameTask.NextPhysicsFrame();
-			var props = Reflection.GetProperties( this );
+			var props = TypeLibrary.GetProperties( this );
 			foreach ( var item in props )
 			{
 				if ( item.Name.StartsWith( "SoundPosition" ) )
