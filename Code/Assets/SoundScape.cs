@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Sandbox
 {
-	[GameResource( "SoundScape", "sndscape", "Create SoundScapes" )]
+	[GameResource( "SoundScape", "sndscape", "Create SoundScapes", Icon = "graphic_eq" )]
 	public partial class SoundScape : GameResource
 	{
 		public static Vector3 Origin = new();
