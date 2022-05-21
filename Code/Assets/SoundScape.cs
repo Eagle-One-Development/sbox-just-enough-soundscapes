@@ -11,7 +11,7 @@ namespace Sandbox
 		public static Vector3 Origin = new();
 		public string[] SoundScapes { get; set; }
 		public List<SoundScape> SecondarySoundscapes = new();
-		public SoundScapeSoundEntry[] SoundEntries { get; set; }
+		public List<SoundScapeSoundEntry> SoundEntries { get; set; }
 
 		public Dictionary<string, List<SoundScapeSoundEntry>> ActiveSoundsByTag = new();
 

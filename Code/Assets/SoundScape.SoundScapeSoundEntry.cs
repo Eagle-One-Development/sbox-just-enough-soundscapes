@@ -2,7 +2,7 @@ namespace Sandbox
 {
 	public partial class SoundScape
 	{
-		public class SoundScapeSoundEntry
+		public struct SoundScapeSoundEntry
 		{
 			public string SoundFile { get; set; }
 			public TagList SoundTag { get; set; }
@@ -11,20 +11,22 @@ namespace Sandbox
 			public string SoundPositionEntityName { get; set; }
 			public Vector3 SoundPosition { get; set; }
 			public Vector2 RandomPositionRadiusMinMax { get; set; }
-			public RangedFloat Volume { get; set; } = new( 1 );
-			public float CurrentVolume = 1f;
-			public RangedFloat Pitch { get; set; } = new( 1 );
-			public RangedFloat RepeatTime { get; set; } = new( -1f );
+			[DefaultValue( "1f,1f,1" )]
+			public RangedFloat Volume { get; set; }
+			public float CurrentVolume;
+			public RangedFloat Pitch { get; set; }
+			public RangedFloat RepeatTime { get; set; }
 
 
 
 			public Sound SoundInstance;
-			private bool localspace = true;
-			private Vector3 GeneratedPosition = new();
-			private Vector3 LastPosition = new();
+			private bool localspace;
+			private Vector3 GeneratedPosition;
+			private Vector3 LastPosition;
 
-			private TimeSince Generated = new();
-			private float ToRepeatTime = 0f;
+			private TimeSince Generated;
+			private float ToRepeatTime;
+
 
 			public void StopSound()
 			{
