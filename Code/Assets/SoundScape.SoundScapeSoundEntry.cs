@@ -11,10 +11,12 @@ namespace Sandbox
 			public string SoundPositionEntityName { get; set; }
 			public Vector3 SoundPosition { get; set; }
 			public Vector2 RandomPositionRadiusMinMax { get; set; }
-			[DefaultValue( "1f,1f,1" )]
+			[DefaultValue( "1f" )]
 			public RangedFloat Volume { get; set; }
 			public float CurrentVolume;
+			[DefaultValue( "1f" )]
 			public RangedFloat Pitch { get; set; }
+			[DefaultValue( "-1f" )]
 			public RangedFloat RepeatTime { get; set; }
 
 
